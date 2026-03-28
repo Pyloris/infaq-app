@@ -1,0 +1,18 @@
+{
+    "expo": {
+        "name": "InfaqApp",
+        "slug": "infaq-app",
+        "version": "1.0.0",
+        "sdkVersion": "54.0.0",
+        "orientation": "portrait",
+        "userInterfaceStyle": "light",
+        "ios": {
+            "supportsTablet": false,
+            "bundleIdentifier": "com.infaq.app"
+        },
+        "android": {
+            "package": "com.infaq.app"
+        },
+        "plugins": []
+    }
+}

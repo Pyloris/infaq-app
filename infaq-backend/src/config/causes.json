@@ -1,0 +1,26 @@
+[
+    {
+        "id": "1",
+        "name": "Education",
+        "percentage": 40,
+        "icon": "🎓"
+    },
+    {
+        "id": "2",
+        "name": "Health",
+        "percentage": 30,
+        "icon": "🏥"
+    },
+    {
+        "id": "3",
+        "name": "Food Security",
+        "percentage": 20,
+        "icon": "🍱"
+    },
+    {
+        "id": "4",
+        "name": "Emergency Relief",
+        "percentage": 10,
+        "icon": "🚑"
+    }
+]
