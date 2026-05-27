@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '@/features/auth/screens/LoginScreen';
 import OtpVerificationScreen from '@/features/auth/screens/OtpVerificationScreen';
 import StartDonationScreen from '@/features/donation/screens/StartDonationScreen';
+import ManagePledgeScreen from '@/features/donation/screens/ManagePledgeScreen';
 import DashboardScreen from '@/features/dashboard/screens/DashboardScreen';
 import ProfileScreen from '@/features/profile/screens/ProfileScreen';
 import HistoryScreen from '@/features/history/screens/HistoryScreen';
@@ -18,6 +19,7 @@ export type RootStackParamList = {
     };
     Onboarding: undefined;
     StartDonation: undefined;
+    ManagePledge: undefined;
     Dashboard: undefined;
     Profile: undefined;
     History: undefined;
@@ -53,6 +55,11 @@ export default function RootNavigator(): React.JSX.Element {
                 <Stack.Screen
                     name="StartDonation"
                     component={StartDonationScreen}
+                    options={{ animation: 'slide_from_right' }}
+                />
+                <Stack.Screen
+                    name="ManagePledge"
+                    component={ManagePledgeScreen}
                     options={{ animation: 'slide_from_right' }}
                 />
                 <Stack.Screen

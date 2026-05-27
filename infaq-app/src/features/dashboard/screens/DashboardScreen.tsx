@@ -5,6 +5,7 @@ import {
     ScrollView,
     TouchableOpacity,
     StyleSheet,
+    RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -29,15 +30,29 @@ export default function DashboardScreen(): React.JSX.Element {
     const dispatch = useAppDispatch();
 
     const [isCausesExpanded, setIsCausesExpanded] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     // Fetch real user data
-    const { data: meData } = useGetMeQuery();
+    const { data: meData, refetch: refetchMe } = useGetMeQuery();
     const apiUser = meData?.data.user;
 
-    const { data: pledgeData } = useGetPledgeQuery();
+    const { data: pledgeData, refetch: refetchPledge } = useGetPledgeQuery();
     const pledge = pledgeData?.data.pledge;
 
-    const { data: dashboardData } = useGetDashboardQuery();
+    const { data: dashboardData, refetch: refetchDashboard } = useGetDashboardQuery();
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        try {
+            await Promise.all([
+                refetchMe(),
+                refetchPledge(),
+                refetchDashboard(),
+            ]);
+        } finally {
+            setRefreshing(false);
+        }
+    }, [refetchMe, refetchPledge, refetchDashboard]);
 
     useEffect(() => {
         if (dashboardData) {
@@ -114,15 +129,6 @@ export default function DashboardScreen(): React.JSX.Element {
                         <Text style={styles.userName}>{displayName}</Text>
                     </View>
                 </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={() => dispatch(baseApi.util.resetApiState())}
-                    accessibilityRole="button"
-                    accessibilityLabel="Refresh Data"
-                    style={styles.refreshButton}
-                >
-                    <Text style={styles.refreshIcon}>🔄</Text>
-                </TouchableOpacity>
             </View>
 
             {/* PledgeCTA removed here as per request to use in-place CTA */}
@@ -130,6 +136,9 @@ export default function DashboardScreen(): React.JSX.Element {
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.primary]} />
+                }
             >
                 {/* ── Total Contribution card ──────────────────────────── */}
                 <View style={styles.contributionCard}>
@@ -207,13 +216,14 @@ export default function DashboardScreen(): React.JSX.Element {
                         <View style={styles.pledgeBottom}>
                             <Text style={styles.pledgeAmount}>
                                 ₹{pledge.amount}
-                                <Text style={styles.pledgePerMonth}>/mo</Text>
+                                <Text style={styles.pledgePerMonth}>/{pledge.frequency}</Text>
                             </Text>
                             <TouchableOpacity
                                 accessibilityRole="button"
                                 accessibilityLabel="Manage pledge"
+                                onPress={() => navigation.navigate('ManagePledge')}
                             >
-                                <Text style={styles.manageLink}>Manage &gt;</Text>
+                                <Text style={styles.manageLink}>Manage Pledge</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -311,19 +321,6 @@ const styles = StyleSheet.create({
         fontSize: FontSize.base,
         fontWeight: FontWeight.bold,
         color: Colors.textPrimary,
-    },
-    refreshButton: {
-        width: 40,
-        height: 40,
-        borderRadius: Radius.full,
-        backgroundColor: Colors.white,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: Colors.border,
-    },
-    refreshIcon: {
-        fontSize: 18,
     },
     pledgeCTA: {
         marginBottom: Spacing.xl,
